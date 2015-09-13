@@ -2,11 +2,14 @@ import caffe
 import cv2
 import numpy as np
 import skimage
-import ipdb
 
 def crop_image(x, target_height=227, target_width=227):
-    print x
     image = skimage.img_as_float(skimage.io.imread(x)).astype(np.float32)
+
+    if len(image.shape) == 2:
+        image = np.tile(image[:,:,None], 3)
+    elif len(image.shape) == 4:
+        image = image[:,:,:,0]
 
     height, width, rgb = image.shape
     if width == height:
@@ -30,7 +33,7 @@ mean = '/home/taeksoo/Package/caffe/python/caffe/imagenet/ilsvrc_2012_mean.npy'
 
 class CNN(object):
 
-    def __init__(self, deploy=deploy, model=model, mean=mean, batch_size=100, width=227, height=227):
+    def __init__(self, deploy=deploy, model=model, mean=mean, batch_size=10, width=227, height=227):
 
         self.deploy = deploy
         self.model = model
